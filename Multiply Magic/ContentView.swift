@@ -18,6 +18,14 @@ struct ContentView: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
+            
+            Text("Multiply Magic")
+                .font(.largeTitle.bold())
+                .foregroundStyle(.white)
+                .frame(width: 300, height: 70)
+                .background(Color(red: 0.94, green: 0.45, blue: 0.20))
+                .cornerRadius(20)
+            
         }
         .ignoresSafeArea()
     }
