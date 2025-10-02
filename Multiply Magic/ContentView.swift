@@ -89,16 +89,16 @@ struct ContentView: View {
                         }
                     }
                     
-                    Button("Start Quiz →") {
-                        
+                    NavigationLink(destination: QuizView(table: 1, numOfquestions: 1)) {
+                        Text("Start Quiz →")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .padding(.horizontal, 40)
+                            .padding(.vertical, 16)
+                            .background(Color(red: 0.94, green: 0.45, blue: 0.20))
+                            .foregroundStyle(.white)
+                            .clipShape(.capsule)
                     }
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .padding(.horizontal, 40)
-                    .padding(.vertical, 16)
-                    .background(Color(red: 0.94, green: 0.45, blue: 0.20))
-                    .foregroundStyle(.white)
-                    .clipShape(.capsule)
                 }
                 .padding(.top, -30)
             }
