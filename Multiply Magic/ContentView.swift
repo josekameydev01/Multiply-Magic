@@ -37,6 +37,7 @@ struct ContentView: View {
                     startPoint: .top,
                     endPoint: .bottom
                 )
+                .ignoresSafeArea()
                 
                 VStack (spacing: 80) {
                     Text("Multiply Magic 🧮")
@@ -46,7 +47,9 @@ struct ContentView: View {
                         .frame(width: 300, height: 70)
                         .background(Color(red: 0.94, green: 0.45, blue: 0.20))
                         .cornerRadius(20)
-
+                    
+                    Spacer()
+                    
                     VStack {
                         Text("Which tables do you want to practice?")
                             .font(.title3)
@@ -73,6 +76,7 @@ struct ContentView: View {
                         }
                     }
                     
+                    
                     VStack {
                         Text("How many questions would you like to answer?")
                             .font(.title3)
@@ -89,6 +93,8 @@ struct ContentView: View {
                         }
                     }
                     
+                    Spacer()
+                    
                     NavigationLink(destination: QuizView(table: 1, numOfquestions: 1)) {
                         Text("Start Quiz →")
                             .font(.title2)
@@ -100,9 +106,7 @@ struct ContentView: View {
                             .clipShape(.capsule)
                     }
                 }
-                .padding(.top, -30)
             }
-            .ignoresSafeArea()
         }
     }
 }
