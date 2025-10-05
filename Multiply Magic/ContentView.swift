@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CircularButtonStyle: ViewModifier {
-    let backgroundColor = Color(red: 0.94, green: 0.45, blue: 0.20)
+    let backgroundColor: Color
     func body(content: Content) -> some View {
         content
             .fontWeight(.bold)
@@ -20,12 +20,19 @@ struct CircularButtonStyle: ViewModifier {
 }
 
 extension View {
-    func circularButtonStyle() -> some View {
-        self.modifier(CircularButtonStyle())
+    func circularButtonStyle(backgroundColor: Color) -> some View {
+        self.modifier(CircularButtonStyle(backgroundColor: backgroundColor))
     }
 }
 
 struct ContentView: View {
+    private let primaryColor = Color(red: 0.94, green: 0.45, blue: 0.20)
+    @State private var selectedTable = -1
+    @State private var desirableNumOfQuestions = -1
+    @State private var selectedTableButton = -1
+    @State private var selectedNumOfQuestionsButton = -1
+    @State private var canNavigate = false
+    @State private var showAlert = false
     var body: some View {
         NavigationStack {
             ZStack {
@@ -60,17 +67,17 @@ struct ContentView: View {
                             HStack {
                                 ForEach(1...6, id: \.self) { table in
                                     Button("\(table)") {
-                                        
+                                        selectedTable = table
                                     }
-                                    .circularButtonStyle()
+                                    .circularButtonStyle(backgroundColor: table == selectedTable ? .gray : primaryColor)
                                 }
                             }
                             HStack {
                                 ForEach(7...12, id: \.self) { table in
                                     Button("\(table)") {
-                                        
+                                        selectedTable = table
                                     }
-                                    .circularButtonStyle()
+                                    .circularButtonStyle(backgroundColor: table == selectedTable ? .gray : primaryColor)
                                 }
                             }
                         }
@@ -86,16 +93,23 @@ struct ContentView: View {
                         HStack {
                             ForEach(1...4, id: \.self) { option in
                                 Button("\(option * 5)") {
-                                    
+                                    selectedNumOfQuestionsButton = option
+                                    desirableNumOfQuestions = option * 5
                                 }
-                                .circularButtonStyle()
+                                .circularButtonStyle(backgroundColor: option == selectedNumOfQuestionsButton ? .gray : primaryColor)
                             }
                         }
                     }
                     
                     Spacer()
                     
-                    NavigationLink(destination: QuizView(table: 1, numOfquestions: 1)) {
+                    Button(action: {
+                        if selectedTable == -1 && desirableNumOfQuestions == -1 {
+                            showAlert = true
+                        } else {
+                            canNavigate = true
+                        }
+                    }, label: {
                         Text("Start Quiz →")
                             .font(.title2)
                             .fontWeight(.bold)
@@ -104,8 +118,17 @@ struct ContentView: View {
                             .background(Color(red: 0.94, green: 0.45, blue: 0.20))
                             .foregroundStyle(.white)
                             .clipShape(.capsule)
-                    }
+                    })
                 }
+                NavigationLink(
+                    destination: QuizView(table: selectedTable, numOfquestions: selectedTable),
+                    isActive: $canNavigate
+                ) {
+                    EmptyView()
+                }
+            }
+            .alert("Please select a table and number of questions before starting.", isPresented: $showAlert) {
+                Button("OK", role: .cancel) {}
             }
         }
     }
