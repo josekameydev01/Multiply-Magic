@@ -29,7 +29,6 @@ struct ContentView: View {
     private let primaryColor = Color(red: 0.94, green: 0.45, blue: 0.20)
     @State private var selectedTable = -1
     @State private var desirableNumOfQuestions = -1
-    @State private var selectedTableButton = -1
     @State private var selectedNumOfQuestionsButton = -1
     @State private var canNavigate = false
     @State private var showAlert = false
@@ -121,7 +120,7 @@ struct ContentView: View {
                     })
                 }
                 NavigationLink(
-                    destination: QuizView(table: selectedTable, numOfquestions: selectedTable),
+                    destination: QuizView(table: selectedTable, numOfquestions: desirableNumOfQuestions),
                     isActive: $canNavigate
                 ) {
                     EmptyView()
@@ -132,7 +131,6 @@ struct ContentView: View {
             }
             .onAppear {
                 selectedTable = -1
-                selectedTableButton = -1
                 selectedNumOfQuestionsButton = -1
                 desirableNumOfQuestions = -1
                 canNavigate = false
