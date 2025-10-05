@@ -130,6 +130,14 @@ struct ContentView: View {
             .alert("Please select a table and number of questions before starting.", isPresented: $showAlert) {
                 Button("OK", role: .cancel) {}
             }
+            .onAppear {
+                selectedTable = -1
+                selectedTableButton = -1
+                selectedNumOfQuestionsButton = -1
+                desirableNumOfQuestions = -1
+                canNavigate = false
+                showAlert = false
+            }
         }
     }
 }
