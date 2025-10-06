@@ -27,7 +27,20 @@ extension View {
 
 struct QuizView: View {
     let table: Int
-    let numOfquestions: Int
+    let numOfQuestions: Int
+    
+    @State private var numOfQuestion = 1
+    @State private var question = ""
+    @State private var options: [Int] = [1,2,3,4]
+    @State private var score = 0
+    @State private var factorB = 1
+    @State private var selectedOption = -1
+    @State private var showErrorAlert = false
+    @State private var showFeedbackAlert = false
+    @State private var showGameOverAlert = false
+    @State private var feedbackAlertTitle = ""
+    @State private var gameOverAlertTitle = ""
+    @State private var correctAnswer = 0
     
     var body: some View {
         ZStack {
@@ -53,13 +66,13 @@ struct QuizView: View {
                 Spacer()
                 
                 HStack {
-                    Text("Question 1 of 10")
+                    Text("Question \(numOfQuestion > numOfQuestions ? numOfQuestions : numOfQuestion) of \(numOfQuestions)")
                         .font(.title2)
                         .fontWeight(.bold)
                     
                     Spacer()
                     
-                    Text("Score: 1/10")
+                    Text("Score: \(score)/\(numOfQuestions)")
                         .padding(6)
                         .background(Color(red: 0.94, green: 0.45, blue: 0.20))
                         .foregroundStyle(.white)
@@ -68,7 +81,7 @@ struct QuizView: View {
                 }
                 .padding(.horizontal)
                 
-                ProgressView(value: Double(1), total: Double(numOfquestions))
+                ProgressView(value: Double(1), total: Double(numOfQuestions))
                     .tint(.black)
                     .padding(.horizontal)
                 
@@ -79,7 +92,7 @@ struct QuizView: View {
                         .font(.title2)
                         .fontWeight(.bold)
                         
-                    Text("9 x 2")
+                    Text("\(question)")
                         .font(.system(size: 40, weight: .bold))
                         .foregroundStyle(Color(red: 0.94, green: 0.45, blue: 0.20))
                     
@@ -94,16 +107,18 @@ struct QuizView: View {
                 VStack {
                     HStack {
                         ForEach(0...1, id: \.self) { index in
-                            Button("\(index)") {
-                                
+                            Button("\(options[index])") {
+                                selectedOption = index
+                                processAnswer(answer: options[index])
                             }
                             .answerButtonStyle()
                         }
                     }
                     HStack {
                         ForEach(2...3, id: \.self) { index in
-                            Button("\(index)") {
-                                
+                            Button("\(options[index])") {
+                                selectedOption = index
+                                processAnswer(answer: options[index])
                             }
                             .answerButtonStyle()
                         }
@@ -114,9 +129,11 @@ struct QuizView: View {
                 Spacer()
                 
                 Button(action: {
-                    
+                    if numOfQuestion < numOfQuestions {
+                        getNextQuestion()
+                    }
                 }, label: {
-                    Text("Next Question →")
+                    Text("Check answer")
                         .foregroundStyle(.white)
                         .fontWeight(.bold)
                         .padding(.horizontal, 16)
@@ -127,10 +144,77 @@ struct QuizView: View {
                 
                 Spacer()
             }
+            .alert("You must choose an option before continuing", isPresented: $showErrorAlert) {
+                Button("OK") { }
+            }
+            .alert(feedbackAlertTitle, isPresented: $showFeedbackAlert) {
+                Button("OK") { }
+            }
+            .alert(gameOverAlertTitle, isPresented: $showGameOverAlert) {
+                Button("OK") { restartGame() }
+            }
+            .onAppear {
+                startGame()
+            }
         }
+    }
+    private func startGame() {
+        factorB = Int.random(in: 1...12)
+        question = "\(table) X \(factorB)"
+        correctAnswer = table * factorB
+        generateOptions()
+        showErrorAlert = false
+        showFeedbackAlert = false
+        selectedOption = -1
+    }
+    private func generateOptions() {
+        var options: [Int] = []
+        
+        options.append(table * factorB)
+        
+        while(options.count < 4) {
+            let option = table * Int.random(in: 1...12)
+            if !options.contains(option) {
+                options.append(option)
+            }
+        }
+        
+        self.options = options
+    }
+    private func processAnswer(answer: Int) {
+        if answer == correctAnswer {
+            score += 1
+            feedbackAlertTitle = "Correct Answer 🎉"
+        } else {
+            feedbackAlertTitle = "Sorry, the correct answer was \(correctAnswer) ☺️"
+        }
+        numOfQuestion += 1
+        
+        if numOfQuestion > numOfQuestions {
+            gameOverAlertTitle = """
+            Game Over! 👾
+            Final Score: \(score)/\(numOfQuestions)
+            """
+            showGameOverAlert = true
+        }
+        
+        getNextQuestion()
+        showFeedbackAlert = true
+    }
+    private func getNextQuestion() {
+        guard selectedOption != -1 else {
+            showErrorAlert = true
+            return
+        }
+        startGame()
+    }
+    private func restartGame() {
+        score = 0
+        numOfQuestion = 1
+        startGame()
     }
 }
 
 #Preview {
-    QuizView(table: 10, numOfquestions: 10)
+    QuizView(table: 10, numOfQuestions: 10)
 }

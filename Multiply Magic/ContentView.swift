@@ -120,7 +120,7 @@ struct ContentView: View {
                     })
                 }
                 NavigationLink(
-                    destination: QuizView(table: selectedTable, numOfquestions: desirableNumOfQuestions),
+                    destination: QuizView(table: selectedTable, numOfQuestions: desirableNumOfQuestions),
                     isActive: $canNavigate
                 ) {
                     EmptyView()
